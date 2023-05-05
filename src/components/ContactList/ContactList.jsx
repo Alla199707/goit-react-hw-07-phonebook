@@ -1,8 +1,9 @@
 // import PropTypes from 'prop-types';
+import { deleteContactItem } from 'redux/operations';
 import ContactItem from '../ContactItem/ContactItem';
 import { List, Button, ListItem } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/ContactsSlice';
+// import { deleteContact } from 'redux/ContactsSlice';
 const ContactList = () => {
   const contacts = useSelector(state => state.contacts);
   const filter = useSelector(state => state.filters);
@@ -21,7 +22,7 @@ const ContactList = () => {
       {filterContacts.map(contact => (
         <ListItem key={contact.id}>
           <ContactItem contacts={contact} />
-          <Button onClick={() => dispatch(deleteContact(contact.id))}>
+          <Button onClick={() => dispatch(deleteContactItem(contact.id))}>
             Delete
           </Button>
         </ListItem>

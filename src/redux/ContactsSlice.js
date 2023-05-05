@@ -1,22 +1,52 @@
-const { createSlice } = require('@reduxjs/toolkit');
+import { addContactItem, deleteContactItem, fetchContacts } from './operations';
 
-const initialState = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
+const { createSlice, isAnyOf } = require('@reduxjs/toolkit');
 
-const ContactSlice = createSlice({
+const arrActions = [fetchContacts, addContactItem, deleteContactItem];
+
+const getActions = type => isAnyOf(...arrActions.map(action => action[type]));
+
+const handlePending = state => {
+  state.isLoading = true;
+};
+const handleFulfild = state => {
+  state.isLoading = true;
+  state.error = '';
+};
+const handleFulfildAll = (state, { payload }) => {
+  state.items = payload;
+};
+
+const handleFulfildAdd = (state, { payload }) => {
+  state.items.push(payload);
+};
+
+const handleFulfildDelete = (state, { payload }) => {
+  const index = state.items.findIndex(contact => contact.id === payload.id);
+  state.items.splice(index, 1);
+  // state.filter(el => el.id !== payload),
+};
+
+const handleRejected = (state, { payload }) => {
+  state.isLoading = false;
+  state.error = payload;
+};
+
+export const ContactSlice = createSlice({
   name: 'contacts',
-  initialState: initialState,
+  initialState: { items: [], isLoading: false, error: null },
 
-  reducers: {
-    addContact: (state, action) => [...state, action.payload],
-    deleteContact: (state, action) =>
-      state.filter(el => el.id !== action.payload),
+  extraReducers: builder => {
+    builder
+      .addCase(fetchContacts.fulfilled, handleFulfildAll)
+      .addCase(addContactItem.fulfilled, handleFulfildAdd)
+      .addCase(deleteContactItem.fulfilled, handleFulfildDelete)
+
+      .addMadcher(getActions('pending'), handlePending)
+      .addMadcher(getActions('rejected'), handleRejected)
+      .addMadcher(getActions('fulfilled'), handleFulfild);
   },
 });
 
-export const { addContact, deleteContact } = ContactSlice.actions;
+// export const { addContactItem, deleteContactItem } = ContactSlice.actions;
 export const contactsReducer = ContactSlice.reducer;

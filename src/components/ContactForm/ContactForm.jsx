@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Forma, Label, Button, Input } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-import { addContact } from 'redux/ContactsSlice';
+// import { addContact } from 'redux/ContactsSlice';
+import { addContactItem } from 'redux/operations';
 
 function ContactForm() {
   const [name, setName] = useState('');
@@ -43,7 +44,7 @@ function ContactForm() {
       contact => contact.name.toLowerCase() === addNewContact.name.toLowerCase()
     )
       ? alert(`${name}is already in contacts.`)
-      : dispatch(addContact(addNewContact));
+      : dispatch(addContactItem(addNewContact));
   };
 
   return (
