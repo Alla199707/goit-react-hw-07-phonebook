@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
 import { Forma, Label, Button, Input } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-// import { addContact } from 'redux/ContactsSlice';
 import { addContactItem } from 'redux/operations';
+import { selectIContacts } from 'redux/selectors';
 
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(selectIContacts);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -46,6 +45,35 @@ function ContactForm() {
       ? alert(`${name}is already in contacts.`)
       : dispatch(addContactItem(addNewContact));
   };
+  // const handleSubmit = e => {
+  //   e.preventDefault();
+  //   const nameId = nanoid();
+
+  //   const userContacts = {
+  //     id: nameId,
+  //     name,
+  //     number,
+  //   };
+
+  //   clearData();
+
+  //   handleCheck(userContacts);
+  // };
+
+  // const clearData = () => {
+  //   setName('');
+  //   setNumber('');
+  // };
+
+  // const handleCheck = obj => {
+  //   const contactsName = contacts.map(contact => contact.name);
+  //   if (contactsName.includes(obj.name)) {
+  //     alert(`${obj.name} is already in contacts.`);
+  //     return;
+  //   }
+
+  //   dispatch(addContactItem(obj));
+  // };
 
   return (
     <Forma onSubmit={handleSubmit}>

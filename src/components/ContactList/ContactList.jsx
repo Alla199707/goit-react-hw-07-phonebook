@@ -1,43 +1,51 @@
-// import PropTypes from 'prop-types';
-import { deleteContactItem } from 'redux/operations';
+import { deleteContactItem, fetchContacts } from 'redux/operations';
 import ContactItem from '../ContactItem/ContactItem';
 import { List, Button, ListItem } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-// import { deleteContact } from 'redux/ContactsSlice';
+import {
+  selectFilters,
+  selectIContacts,
+  selectIsLoading,
+} from 'redux/selectors';
+import { useEffect } from 'react';
+import Loader from 'components/Loader/Loader';
+
 const ContactList = () => {
-  const contacts = useSelector(state => state.contacts);
-  const filter = useSelector(state => state.filters);
+  const contacts = useSelector(selectIContacts);
+  const filter = useSelector(selectFilters);
+  const isLoading = useSelector(selectIsLoading);
   const dispatch = useDispatch();
 
   const getFilterContacts = () => {
-    return contacts.filter(contact => {
-      return contact.name.toLowerCase().includes(filter.toLowerCase());
-    });
+    return (
+      contacts &&
+      contacts.filter(contact => {
+        return contact.name.toLowerCase().includes(filter.toLowerCase());
+      })
+    );
   };
 
   const filterContacts = getFilterContacts();
 
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+  // console.log(filterContacts);
   return (
-    <List>
-      {filterContacts.map(contact => (
-        <ListItem key={contact.id}>
-          <ContactItem contacts={contact} />
-          <Button onClick={() => dispatch(deleteContactItem(contact.id))}>
-            Delete
-          </Button>
-        </ListItem>
-      ))}
-    </List>
+    <>
+      {isLoading && <Loader />}
+      <List>
+        {filterContacts.map(contact => (
+          <ListItem key={contact.id}>
+            <ContactItem contacts={contact} />
+            <Button onClick={() => dispatch(deleteContactItem(contact.id))}>
+              Delete
+            </Button>
+          </ListItem>
+        ))}
+      </List>
+    </>
   );
 };
-
-// ContactList.propTypes = {
-//   deleteContact: PropTypes.func.isRequired,
-//   contacts: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       id: PropTypes.string.isRequired,
-//     })
-//   ).isRequired,
-// };
 
 export default ContactList;
